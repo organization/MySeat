@@ -7,6 +7,7 @@ use pocketmine\event\Listener;
 use ifteam\SuperUser\SuperUser;
 use pocketmine\IPlayer;
 use pocketmine\event\player\PlayerPreLoginEvent;
+use pocketmine\event\player\PlayerKickEvent;
 
 class MySeat extends PluginBase implements Listener {
 	/**
@@ -26,10 +27,7 @@ class MySeat extends PluginBase implements Listener {
 		$this->getSuList ();
 		$this->getServer ()->getPluginManager ()->registerEvents ( $this, $this );
 	}
-	public function onPlayerJoin(PlayerPreLoginEvent $event) {
-		if (count ( $this->getServer ()->getOnlinePlayers () ) < $this->getServer ()->getMaxPlayers ())
-			return;
-		
+	public function onPlayerKickEvent(PlayerKickEvent $event) {
 		if ($this->isManager ( $event->getPlayer () ))
 			$event->setCancelled ();
 	}
