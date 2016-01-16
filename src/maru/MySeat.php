@@ -6,7 +6,6 @@ use pocketmine\plugin\PluginBase;
 use pocketmine\event\Listener;
 use ifteam\SuperUser\SuperUser;
 use pocketmine\IPlayer;
-use pocketmine\event\player\PlayerPreLoginEvent;
 use pocketmine\event\player\PlayerKickEvent;
 
 class MySeat extends PluginBase implements Listener {
@@ -28,8 +27,10 @@ class MySeat extends PluginBase implements Listener {
 		$this->getServer ()->getPluginManager ()->registerEvents ( $this, $this );
 	}
 	public function onPlayerKickEvent(PlayerKickEvent $event) {
-		if ($this->isManager ( $event->getPlayer () ))
-			$event->setCancelled ();
+		if ($event->getReason() == "disconnectionScreen.serverFull"){
+			if ($this->isManager ( $event->getPlayer () ))
+				$event->setCancelled ();
+		}
 	}
 	private function getSuList() {
 		if (isset ( $this->su->db ['su'] ))
