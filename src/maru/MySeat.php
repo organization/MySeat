@@ -14,7 +14,7 @@ class MySeat extends PluginBase implements Listener {
 	 * @var SuperUser
 	 */
 	private $su;
-	private $suList;
+	private $suList = [ ];
 	public function onEnable() {
 		$this->su = $this->getServer ()->getPluginManager ()->getPlugin ( "SuperUser" );
 		if ($this->su === null) {
@@ -22,30 +22,24 @@ class MySeat extends PluginBase implements Listener {
 			$this->getServer ()->getPluginManager ()->disablePlugin ( $this );
 			return;
 		}
-		
-		$this->getSuList ();
 		$this->getServer ()->getPluginManager ()->registerEvents ( $this, $this );
 	}
 	public function onPlayerKickEvent(PlayerKickEvent $event) {
-		if ($event->getReason() == "disconnectionScreen.serverFull"){
+		if ($event->getReason () == "disconnectionScreen.serverFull") {
+			if (count ( $this->suList ) === 0)
+				$this->getSuList ();
 			if ($this->isManager ( $event->getPlayer () ))
 				$event->setCancelled ();
 		}
 	}
 	private function getSuList() {
 		if (isset ( $this->su->db ['su'] ))
-			foreach ( $this->su->db ['su'] as $su ) {
-				foreach ( $su as $passkey => $data ) {
-					if ($data ['firstLoginName'] !== null)
-						$this->suList [$data ['firstLoginName']] = true;
-				}
-			}
-		if (isset ( $this->su->db ['staff'] ))
-			foreach ( $this->su->db ['staff'] as $staff ) {
-				foreach ( $staff as $passkey => $data ) {
+			foreach ( $this->su->db ['su'] as $passkey => $data )
+				if ($data ['firstLoginName'] !== null)
 					$this->suList [$data ['firstLoginName']] = true;
-				}
-			}
+		if (isset ( $this->su->db ['staff'] ))
+			foreach ( $staff as $passkey => $data )
+				$this->suList [$data ['firstLoginName']] = true;
 	}
 	/**
 	 *
